@@ -132,10 +132,6 @@ static/
 /static/
 */static/
 
-media/
-/media/
-*/media/
-
 */migrations/*
 !*/migrations/__init__.py
 /.env

@@ -79,6 +79,7 @@ class FingerVerifyView(GenericAPIView):
 class PersonDestroyView(DestroyAPIView):
     permission_classes = [AllowAny]
     queryset = Person.objects.all()
+    serializer_class = None
 
     def get_object(self):
         instance = get_object_or_404(
