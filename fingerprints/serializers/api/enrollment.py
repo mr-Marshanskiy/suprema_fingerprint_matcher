@@ -1,12 +1,7 @@
-import json
-import pdb
-
-import requests
 from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError
 
-from config.settings import BOARD_API_URL, BOARD_API_TOKEN
 from fingerprints.models.dicts import CaptureMode, CaptureType
 from fingerprints.models.enrollment import Enrollment, Finger, Slap
 
@@ -61,8 +56,8 @@ class EnrollmentCreateSerializer(serializers.ModelSerializer):
             person_data = validated_data.pop('person', None)
             fingers_data = validated_data.pop('fingers', None)
             slaps_data = validated_data.pop('slaps', None)
-            error_code = validated_data.pop('error_code')
-            error_message = validated_data.pop('error_message')
+            validated_data.pop('error_code')
+            validated_data.pop('error_message')
 
             person = Person.objects.create(**person_data)
             validated_data['person'] = person

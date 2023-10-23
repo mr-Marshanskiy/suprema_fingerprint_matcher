@@ -2,7 +2,7 @@ import base64
 from .imports import ufm_lib
 from ctypes import *
 
-from fingerprints.tools.matcher.error import MatcherError
+from fingerprints.tools.matcher.errors import MatcherError
 
 
 MAX_TEMPLATE_SIZE = 1024

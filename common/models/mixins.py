@@ -32,16 +32,5 @@ class DictBaseCodeMixin(models.Model):
         ordering = ('name',)
 
 
-class DictBaseIdMixin(models.Model):
-    name = models.CharField('Name', max_length=63)
-
-    def __str__(self):
-        return f'{self.name} ({self.pk})'
-
-    class Meta:
-        abstract = True
-        ordering = ('name',)
-
-
 class DateModelAdminMixin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at',)
