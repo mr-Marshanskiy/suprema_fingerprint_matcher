@@ -59,6 +59,9 @@
 
 
 ## Enrollment
+
+![Image alt](https://github.com/mr-Marshanskiy/suprema_fingerprint_matcher/tree/main/media/Enrollment.jpg)
+
 Для процедуры записи (Enrollment) используется сканер **Suprema RealScan-G10**. 
 Данный сканер создает локальный API, к которому обращается клиент, 
 и перенаправляет сканированные данные на вход API проекта. 
