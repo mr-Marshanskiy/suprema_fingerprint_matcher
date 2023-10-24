@@ -6,6 +6,20 @@
    - 📋 [Задачи](#goals)
    - 📟 [Функциональные возможности](#func_abilities)
 2. 🛠 [Особенности проекта](#project_desc)
+   - ❗ [Реализация проекта](#project_deployment)
+   - 🔑 [Лицензионные ограничения](#lic_restrictions)
+   - 🔩 [Совместимость](#compatibility)
+   - 📑 [Шаблонная схема взаимодействия](#scheme_template)
+3. ⚙ [Описание функциональных возможностей](#desc_func_ablilities)
+   - ✋ [Enrollment](#enrollment)
+   - 👥✅ [Identification](#identification)
+   - 👤✅ [Verification](#verification)
+   - ❌ [Удаление записей](#destroying)
+4. 📲 [Установка и запуск](#installation)
+5. 📗 [Документация API](#docs)
+6. 🔐 [Лицензия](#project_lic)
+7. 🧙‍♂️ [Авторы](#developers)
+
 
 <a name="project_desc"></a> 
 ## ✏️ Описание проекта ##
