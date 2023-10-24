@@ -71,78 +71,70 @@
 Все запросы инициируются клиентом с ПК пользователя, поэтому API Suprema для клиента 
 доступны через `localhost` (`127.0.0.1`).
 
+### Описание технической реализации функционала
+Выделяющимися в проекте являются следующие классы:
+* `class FingerMatcher` (`fingerprints/tools/matcher/identification.py`)
+* `class BoardSyncService` (`fingerprints/tools/board_sync.py`)
+
+Описание механики находится в `fingerprints/tools/tools_description.md`
 ## Описание функциональных возможностей
 
 ### Enrollment
 
 ![Enrollment scheme](https://github.com/mr-Marshanskiy/suprema_fingerprint_matcher/tree/main/media/Enrollment.jpg)
 
-Для процедуры записи (Enrollment) используется сканер **Suprema RealScan-G10**. 
+Для процедуры записи (Enrollment) используется сканер `Suprema RealScan-G10`. 
 
 1. Клиент отправляет запрос на web-сервис для получения информации о целевом сотруднике
-```
-   GET https://web.server.domain/api/employees/100/
-```
-
 2. Web-сервис возвращает ответ с данными
-```
-   200 OK
-   {
-      "id": 100,
-      "first_name": "Ivan",
-      "last_name": "Ivanov",
-      ...
-   }
-```
-
 3. Клиент отправляет запрос на API RealScan-G10
 ```
-   GET http://127.0.0.1:11121/rswas/DeviceInfo - Проверка доступности устройства
-   POST http://127.0.0.1:11121/rswas/Capture - Начало процедуры сканирования
-   GET http://127.0.0.1:11121/rswas/CanvasInfo - Получение отпечатков
+GET http://127.0.0.1:11121/rswas/DeviceInfo - Проверка доступности устройства
+POST http://127.0.0.1:11121/rswas/Capture - Начало процедуры сканирования
+GET http://127.0.0.1:11121/rswas/CanvasInfo - Получение отпечатков
 ```
 
 4. API RealScan-G10 возвращает ответ, в котором содержится информация о
 всех отсканированных пальцах по отдельности и об отпечатках ладоней
 ```
-   200 OK
+200 OK
+{
    {
-      {
-        "captureMode": "string",
-        "captureType": "string",
-        "errCode": 0,
-        "errMsg": "string",
-        "fingers": [
-          {
-            "fingerNo": "string",
-            "imgQuality": 0,
-            "wsqData": "string",
-            "imgType": "string",
-            "imgData": "string",
-            "isoFMRType": "string",
-            "isoFMRData": "string",
-            "isoFIRType": "string",
-            "isoFIRData": "string"
-          }
-        ],
-        "slaps": [
-          {
-            "slapType": "string",
-            "wsqData": "string",
-            "imgType": "string",
-            "imgData": "string",
-            "isoFIRType": "string",
-            "isoFIRData": "string"
-          }
-        ]
-      }
+     "captureMode": "string",
+     "captureType": "string",
+     "errCode": 0,
+     "errMsg": "string",
+     "fingers": [
+       {
+         "fingerNo": "string",
+         "imgQuality": 0,
+         "wsqData": "string",
+         "imgType": "string",
+         "imgData": "string",
+         "isoFMRType": "string",
+         "isoFMRData": "string",
+         "isoFIRType": "string",
+         "isoFIRData": "string"
+       }
+     ],
+     "slaps": [
+       {
+         "slapType": "string",
+         "wsqData": "string",
+         "imgType": "string",
+         "imgData": "string",
+         "isoFIRType": "string",
+         "isoFIRData": "string"
+       }
+     ]
    }
+}
 ```
 
 5. Клиент добавляет к полученным данным информацию из web-сервиса в ключ `person`
 и отправляет запрос на **API Enrollment & Matcher**
 ```
-   Добавить к ответу:
+Добавить к ответу:
   
 "person": {
     "first_name": "Ivan",
@@ -164,20 +156,19 @@ POST https:biometry.local/api/fingerprints/enrollment/
 * запускает процесс синхронизации с web-сервисом: генериррует и отправляет информацию 
 о UUID созданных отпечатков. В заголовке передается Токен для авторизации.
 ```
-   POST https://web.server.domain/api/api/biometry/fingerprints/enrollment/employee/
-   body = {
-     "person": "string",
-     "fingers": [
-       "eb23dcda-71dc-11ee-b962-0242ac120002",
-       "6845f385-0cfd-492e-9d1e-e8010de862b4",
-       ....
-      ]
-   }
+POST https://web.server.domain/api/api/biometry/fingerprints/enrollment/employee/
+body = {
+  "person": "string",
+  "fingers": [
+    "eb23dcda-71dc-11ee-b962-0242ac120002",
+    "6845f385-0cfd-492e-9d1e-e8010de862b4",
+    ....
+   ]
+}
 ```
-* после получения ответа от web-сервиса отправляет ответ клиенту (п.8);
 
 7. **Web-сервис** связывает полученные UUID с объектом целевого сотрудника
-8. **API Enrollment & Matcher** отправляет ответ клиенту
+8. **API Enrollment & Matcher** отправляет ответ клиенту об успешном создании объектов
 ```
    201 CREATED
 ```
@@ -189,32 +180,116 @@ POST https:biometry.local/api/fingerprints/enrollment/
 
 ![Enrollment scheme](https://github.com/mr-Marshanskiy/suprema_fingerprint_matcher/tree/main/media/Identify.jpg)
 
+Для процедуры идентификации используется сканер `Suprema BioMini`. 
+
+1. Клиент отправляет запрос на `API BioMini`. 
+В качестве параметра`dummy` передается псевдорандомное число
+```
+GET http://localhost:5678/api/initDevice?dummy=${dummy}
+GET http://localhost:5678/api/setParameters?dummy=${dummy}&sHandle=${device_handle}&templateType=${type}
+GET http://localhost:5678/api/getScannerStatus?dummy=${dummy}&sHandle=${device_handle}
+GET http://localhost:5678/api/captureSingle?dummy=${dummy}&sHandle=${device_handle}&id=0
+GET http://localhost:5678/api/getTemplateData?dummy=${dummy}&sHandle=${device_handle}&id=0&encrypt=0&qualityLevel=1&encryptKey&extractEx=0
+```
+
+2. `API BioMini` возвращает Template полученного отпечатка пальца
+3. Клиент отправляет запрос на `API Enrollment & Matcher` и передает полученный Template
+```
+POST https://biometry.local/api/fingerprints/identify/
+body={
+  "template": "template_info_in_base_64",
+  "status": "employee"
+}
+```
+
+4. `API Enrollment & Matcher` определяет, какому отпечатку, хранящемуся в базе данных 
+соответствуюет переданный Template. Если совпадений не найдено, то ответ будет:
+```
+400 NOT_FOUND
+```
+Если совпадение было найдено, то происходит поиск объекта `persons.Person` и 
+возвращает информацию о нем в ответе:
+```
+200 OK
+{
+  "full_name": "Ivan Ivanov",
+  "status": "employee",
+  "board_id": 100
+}
+```
+
+5. Если клиент получает статус 200 в ответ, то отправляет запрос на web-сервис на получение 
+информации о сотруднике, в качестве `id` используется значения по ключу `board_id`
+```
+GET https://web.server.domain/api/employees/{id}/
+```
+6. Web-сервис возвращает информацию о сотруднике. Клиент отрисовывает профиль 
+сотрудника.
+
 ### Verification
 
 ![Enrollment scheme](https://github.com/mr-Marshanskiy/suprema_fingerprint_matcher/tree/main/media/Verify.jpg)
 
+Для процедуры верификации используется сканер `Suprema BioMini`. 
+
+1. Клиент отправляет запрос на web-сервис на получение профиля сотрудника
+2. Web-сервис возвращает информацию клиенту
+3. Клиент отправляет запрос на `API BioMini`. 
+В качестве параметра`dummy` передается псевдорандомное число
+```
+GET http://localhost:5678/api/initDevice?dummy=${dummy}
+GET http://localhost:5678/api/setParameters?dummy=${dummy}&sHandle=${device_handle}&templateType=${type}
+GET http://localhost:5678/api/getScannerStatus?dummy=${dummy}&sHandle=${device_handle}
+GET http://localhost:5678/api/captureSingle?dummy=${dummy}&sHandle=${device_handle}&id=0
+GET http://localhost:5678/api/getTemplateData?dummy=${dummy}&sHandle=${device_handle}&id=0&encrypt=0&qualityLevel=1&encryptKey&extractEx=0
+```
+
+4. `API BioMini` возвращает Template полученного отпечатка пальца
+5. Клиент отправляет запрос на `API Enrollment & Matcher` и передает 
+ID сотрудника и полученный Template
+```
+POST https://biometry.local/api/fingerprints/verify/
+body={
+  "template": "template_info_in_base_64",
+  "status": "employee",
+  "board_id": 100
+}
+```
+
+6. `API Enrollment & Matcher` выбирает отпечатки, принадлежащие субъекту 
+с соответствующим значением `board_id` и определяет, существует ли совпадение 
+в выборке с переданным Template. Если совпадений не найдено, то ответ будет:
+```
+400 NOT_FOUND
+{'detail': 'Not verified'}
+```
+Если совпадение было найдено, то ответ будет:
+```
+200 OK
+{'detail': 'Verified'}
+```
+
+Клиент отражает полученную информацию, верифицирован ли выбранный сотрудник 
+по отсканированному отпечатку
+
+
 ### Удаление записей
-Проект также включает в себя метод удаления записей об отпечатках пальцев.
-
-### Синхронизация данных
-Процессы записи и удаления отпечатков сопровождаются синхронизацией данных 
-с API-сервисом, обозначенным условно как "Board".
-
-
-> Важно отметить, что данное решение оптимизировано для использования с 
-конкретными сканерами **Suprema RealScan-G10** для Enrollment и **Suprema BioMini** для идентификации и верификации, 
-поскольку проект спроектирован для работы с данными сканерами, 
-которые предоставляют информацию в определенном формате через их собственные API.
-
-
-1. **API с использованием DRF**: Проект использует Django REST framework для создания RESTful API, обеспечивающего [описание возможностей, предоставляемых API].
-
-2. **[Другие ключевые особенности]**: [Описание других важных особенностей проекта, таких как аутентификация, авторизация, фронтенд и другие].
+Запрос на удаление данных:
+```
+DELTE /api/fingerprints/destroy/{board_id}/
+```
+По значению `board_id` находится объект persons.Person и каскадно удаляются 
+все объекты `Enrollment`, `Slap`, `Finger` из приложения `fingerprints`. После 
+происходит синхронизация с web-сервисом, откуда также удаляется информация о 
+наличии отпечатков для сотрдудника.
 
 ## Используемые технологии
 
 - **Django**: Основной фреймворк для веб-разработки.
 - **Django REST framework (DRF)**: Используется для разработки API.
+- **libusb:** .
+- **psycopg2:** .
+- **
 - **[Другие библиотеки и инструменты]**: [Список других технологий и инструментов, используемых в проекте].
 
 ## Установка и запуск
