@@ -81,7 +81,7 @@
 
 ### Enrollment
 
-![Enrollment scheme](https://github.com/mr-Marshanskiy/suprema_fingerprint_matcher/tree/main/media/Enrollment.jpg)
+![Enrollment](https://github.com/mr-Marshanskiy/suprema_fingerprint_matcher/assets/72431177/7f48e944-92b5-4690-911f-1ee8bcbf2199)
 
 Для процедуры записи (Enrollment) используется сканер `Suprema RealScan-G10`. 
 
@@ -178,7 +178,7 @@ body = {
 
 ### Identification
 
-![Enrollment scheme](https://github.com/mr-Marshanskiy/suprema_fingerprint_matcher/tree/main/media/Identify.jpg)
+![Identify](https://github.com/mr-Marshanskiy/suprema_fingerprint_matcher/assets/72431177/60681152-d1b3-444a-a697-3871e65bb484)
 
 Для процедуры идентификации используется сканер `Suprema BioMini`. 
 
@@ -228,7 +228,7 @@ GET https://web.server.domain/api/employees/{id}/
 
 ### Verification
 
-![Enrollment scheme](https://github.com/mr-Marshanskiy/suprema_fingerprint_matcher/tree/main/media/Verify.jpg)
+![Verify](https://github.com/mr-Marshanskiy/suprema_fingerprint_matcher/assets/72431177/f9f0495b-cf1e-4575-8c40-7501c6c00081)
 
 Для процедуры верификации используется сканер `Suprema BioMini`. 
 
