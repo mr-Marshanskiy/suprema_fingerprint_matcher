@@ -1,6 +1,6 @@
 # Suprema Fingerprint Enrollment and Matcher #
 
-### СОДЕРЖАНИЕ
+### 📌 СОДЕРЖАНИЕ 
 
 1. ✏️ [Описание проекта](#project_desc)
    - 📋 [Задачи](#goals)
